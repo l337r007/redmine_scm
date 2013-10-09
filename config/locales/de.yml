@@ -7,6 +7,9 @@ de:
 
   text_cannot_be_changed_later: Kann später nicht mehr geändert werden.
   text_cannot_be_used_redmine_auth: Die Authentifizierung über Redmine kann mit diesem Repository Namen nicht verwendet werden.
+  text_scm_creator_not_configured_warning: SCM Creator ist installiert, aber nicht konfiguriert.
+  text_scm_repository_created_by_scm: Das Repository wurde speziell für Redmine angelegt. Wenn sein Eintrag in Redmine gelöscht wird, werden die Daten auf der Festplatte nutzlos.
+  text_scm_repository_destroy_confirmation: Soll das Repository auch von der Festplatte gelöscht werden?
 
   activerecord:
     errors:
@@ -15,3 +18,9 @@ de:
         already_exists: existiert bereits
         scm_not_supported: Dieses SCM wird nicht unterstützt.
         repository_exists_for_identifier: Für diesen Projektnamen existiert bereits ein Repository.
+        scm_repositories_maximum_count_exceeded: Die maximale Anzahl an Repositories (%{max}) ist bereits angelegt.
+        scm_local_repositories_denied: Lokale Repositories hinzufügen wurde durch den Administrator deaktiviert
+        scm_only_creator: Benutzen Sie "Neues Repository erstellen" um ein Repository anzulegen
+        scm_repository_creation_failed: Erstellen des Repository ist fehlgeschlagen
+        scm_name_not_given: Es wurde kein Name für das Repository angegeben.
+        scm_auth_error: Das Repository muss als Name "%{name}" oder "%{name}.<Zahl>" haben.
