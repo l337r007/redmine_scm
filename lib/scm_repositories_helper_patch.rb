@@ -38,6 +38,20 @@ module ScmRepositoriesHelperPatch
                 end
             end
 
+            def scm_creator_suggest_name(creator_interface)
+                name = @project.identifier.dup
+                if creator_interface.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
+                    name << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
+                end
+                return name
+            end
+
+            def scm_creator_suggest_path(creator_interface)
+                suggested_reponame = scm_creator_suggest_name(creator_interface)
+                repopath = creator_interface.default_path(suggested_reponame)
+                return creator_interface.access_root_url(repopath)
+            end
+
         end
     end
 
@@ -89,10 +103,7 @@ module ScmRepositoriesHelperPatch
                 svntags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 svntags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
-                    path = SubversionCreator.access_root_url(SubversionCreator.default_path(@project.identifier))
-                    if SubversionCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
-                        path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
-                    end
+                    path = scm_creator_suggest_path(SubversionCreator)
                     scm_creator_add_tag_to_set_repository_url_to(svntags, path)
                 end
 
@@ -120,10 +131,7 @@ module ScmRepositoriesHelperPatch
                 end
                 hgtags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
-                    path = MercurialCreator.access_root_url(MercurialCreator.default_path(@project.identifier))
-                    if MercurialCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
-                        path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
-                    end
+                    path = scm_creator_suggest_path(MercurialCreator)
                     scm_creator_add_tag_to_set_repository_url_to(hgtags, path)
                 end
 
@@ -153,10 +161,7 @@ module ScmRepositoriesHelperPatch
                 bzrtags.gsub!('</p>', ' ' + scm_creator_create_button() + '</p>')
                 bzrtags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
-                    path = BazaarCreator.access_root_url(BazaarCreator.default_path(@project.identifier))
-                    if BazaarCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
-                        path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
-                    end
+                    path = scm_creator_suggest_path(BazaarCreator)
                     scm_creator_add_tag_to_set_repository_url_to(bzrtags, path)
                     if BazaarCreator.options['log_encoding']
                         if defined? observe_field # Rails 3.0 and below
@@ -191,10 +196,7 @@ module ScmRepositoriesHelperPatch
                 end
                 gittags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
-                    path = GitCreator.access_root_url(GitCreator.default_path(@project.identifier))
-                    if GitCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
-                        path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
-                    end
+                    path = scm_creator_suggest_path(GitCreator)
                     scm_creator_add_tag_to_set_repository_url_to(gittags, path)
                 end
 
