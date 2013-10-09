@@ -12,6 +12,16 @@ module ScmRepositoriesHelperPatch
             alias_method_chain :mercurial_field_tags,  :add
             alias_method_chain :git_field_tags,        :add
             alias_method_chain :bazaar_field_tags,     :add
+
+            # extra methods not method_chained somehow(?) need to go here.
+
+            def scm_creator_max_repositories_reached()
+                return @project.respond_to?(:repositories) &&
+                       ScmConfig['max_repos'] &&
+                       ScmConfig['max_repos'].to_i > 0 &&
+                       @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
+            end
+
         end
     end
 
@@ -57,10 +67,7 @@ module ScmRepositoriesHelperPatch
             svntags = subversion_field_tags_without_add(form, repository)
             svntags.gsub!('&lt;br /&gt;', '<br />')
 
-            if @project.respond_to?(:repositories) &&
-                ScmConfig['max_repos'] && ScmConfig['max_repos'].to_i > 0 && @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
-                return svntags
-            end
+            return svntags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && SubversionCreator.enabled?
                 if defined? observe_field # Rails 3.0 and below
@@ -96,10 +103,7 @@ module ScmRepositoriesHelperPatch
         def mercurial_field_tags_with_add(form, repository)
             hgtags = mercurial_field_tags_without_add(form, repository)
 
-            if @project.respond_to?(:repositories) &&
-                ScmConfig['max_repos'] && ScmConfig['max_repos'].to_i > 0 && @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
-                return hgtags
-            end
+            return hgtags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && MercurialCreator.enabled?
                 if defined? observe_field # Rails 3.0 and below
@@ -145,10 +149,7 @@ module ScmRepositoriesHelperPatch
         def bazaar_field_tags_with_add(form, repository)
             bzrtags = bazaar_field_tags_without_add(form, repository)
 
-            if @project.respond_to?(:repositories) &&
-                ScmConfig['max_repos'] && ScmConfig['max_repos'].to_i > 0 && @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
-                return bzrtags
-            end
+            return bzrtags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && BazaarCreator.enabled?
                 if defined? observe_field # Rails 3.0 and below
@@ -191,10 +192,7 @@ module ScmRepositoriesHelperPatch
         def git_field_tags_with_add(form, repository)
             gittags = git_field_tags_without_add(form, repository)
 
-            if @project.respond_to?(:repositories) &&
-                ScmConfig['max_repos'] && ScmConfig['max_repos'].to_i > 0 && @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
-                return gittags
-            end
+            return gittags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && GitCreator.enabled?
                 if defined? observe_field # Rails 3.0 and below
