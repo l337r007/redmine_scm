@@ -52,6 +52,26 @@ module ScmRepositoriesHelperPatch
                 return creator_interface.access_root_url(repopath)
             end
 
+            def scm_field_tags_name_only(form, repository, interface)
+                if repository.new_record?
+                   if request.post?
+                       reponame = request.params[:repository_name]
+                   else
+                       reponame = scm_creator_suggest_name(interface)
+                   end
+                elsif interface.manages?(repository)
+                   reponame = interface.repository_name(repository.root_url)
+                end
+                return content_tag('p',
+                          label_tag(:repository_name, l(:field_name)) +
+                          text_field_tag(:repository_name, reponame ,:size => 30)
+                      ) +
+                      content_tag('p',scm_creator_create_button() +
+                                      hidden_field_tag(:operation, '', :id => 'repository_operation')
+                      )
+            end
+
+
         end
     end
 
@@ -94,6 +114,9 @@ module ScmRepositoriesHelperPatch
         end
 
         def subversion_field_tags_with_add(form, repository)
+            if ScmConfig['only_use_name']
+               return self.scm_field_tags_name_only(form, repository, SubversionCreator)
+            end
             svntags = subversion_field_tags_without_add(form, repository)
             svntags.gsub!('&lt;br /&gt;', '<br />')
 
@@ -119,6 +142,9 @@ module ScmRepositoriesHelperPatch
         end
 
         def mercurial_field_tags_with_add(form, repository)
+            if ScmConfig['only_use_name']
+               return self.scm_field_tags_name_only(form, repository, MercurialCreator)
+            end
             hgtags = mercurial_field_tags_without_add(form, repository)
 
             return hgtags if scm_creator_max_repositories_reached()
@@ -153,6 +179,9 @@ module ScmRepositoriesHelperPatch
         end
 
         def bazaar_field_tags_with_add(form, repository)
+            if ScmConfig['only_use_name']
+               return self.scm_field_tags_name_only(form, repository, BazaarCreator)
+            end
             bzrtags = bazaar_field_tags_without_add(form, repository)
 
             return bzrtags if scm_creator_max_repositories_reached()
@@ -184,6 +213,9 @@ module ScmRepositoriesHelperPatch
         end
 
         def git_field_tags_with_add(form, repository)
+            if ScmConfig['only_use_name']
+               return self.scm_field_tags_name_only(form, repository, GitCreator)
+            end
             gittags = git_field_tags_without_add(form, repository)
 
             return gittags if scm_creator_max_repositories_reached()

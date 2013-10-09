@@ -71,6 +71,18 @@ module ScmRepositoriesControllerPatch
                     end
 
                     @repository = Repository.factory(params[:repository_scm])
+
+                    if ScmConfig['only_use_name']
+                        if params[:repository_name]
+                            # derive url from path and name
+                            url = interface.access_root_url(interface.path(params[:repository_name])) + "/"
+                            Rails.logger.info "Generated URL for repo: %s" % url
+                            attributes['url'] = url
+                        else
+                            @repository.errors.add(:base, :scm_name_not_given)
+                        end
+                    end
+
                     if @repository.respond_to?(:safe_attribute_names) && @repository.safe_attribute_names.any?
                         @repository.safe_attributes = attributes
                     else # Redmine < 2.2
@@ -173,7 +185,19 @@ module ScmRepositoriesControllerPatch
                                 attrs[name] = value
                             end
                         end
+                        if ScmConfig['only_use_name']
+                            if params[:repository_name]
+                                # derive url from path and name
+                                url = interface.access_root_url(interface.path(params[:repository_name])) + "/"
+                                Rails.logger.info "Generated URL for repo: %s" % url
+                                attrs['url'] = url
+                            else
+                                @repository.errors.add(:base, :scm_name_not_given)
+                            end
+                        end
+
                         @repository.attributes = attrs
+
 
                         if @repository.valid? && params[:operation].present? && params[:operation] == 'add'
                             scm_create_repository(@repository, interface, attrs['url']) if attrs
