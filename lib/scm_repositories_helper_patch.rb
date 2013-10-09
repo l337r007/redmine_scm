@@ -22,6 +22,14 @@ module ScmRepositoriesHelperPatch
                        @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
             end
 
+            def scm_creator_create_button()
+                if defined? observe_field # Rails 3.0 and below
+                    return submit_tag(l(:button_create_new_repository), :onclick => "$('repository_operation').value = 'add';")
+                else # Rails 3.1 and above
+                    return submit_tag(l(:button_create_new_repository), :onclick => "$('#repository_operation').val('add');")
+                end
+            end
+
             def scm_creator_add_tag_to_set_repository_url_to(tags, path)
                 if defined? observe_field # Rails 3.0 and below
                     tags << javascript_tag("$('repository_url').value = '#{escape_javascript(path)}';")
@@ -78,12 +86,7 @@ module ScmRepositoriesHelperPatch
             return svntags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && SubversionCreator.enabled?
-                if defined? observe_field # Rails 3.0 and below
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('repository_operation').value = 'add';")
-                else # Rails 3.1 and above
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('#repository_operation').val('add');")
-                end
-                svntags.gsub!('<br />', ' ' + add + '<br />')
+                svntags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 svntags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
                     path = SubversionCreator.access_root_url(SubversionCreator.default_path(@project.identifier))
@@ -110,15 +113,10 @@ module ScmRepositoriesHelperPatch
             return hgtags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && MercurialCreator.enabled?
-                if defined? observe_field # Rails 3.0 and below
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('repository_operation').value = 'add';")
-                else # Rails 3.1 and above
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('#repository_operation').val('add');")
-                end
                 if hgtags.include?('<br />')
-                    hgtags.gsub!('<br />', ' ' + add + '<br />')
+                    hgtags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 else
-                    hgtags.gsub!('</p>', ' ' + add + '</p>')
+                    hgtags.gsub!('</p>', ' ' + scm_creator_create_button() + '</p>')
                 end
                 hgtags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
@@ -152,12 +150,7 @@ module ScmRepositoriesHelperPatch
             return bzrtags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && BazaarCreator.enabled?
-                if defined? observe_field # Rails 3.0 and below
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('repository_operation').value = 'add';")
-                else # Rails 3.1 and above
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('#repository_operation').val('add');")
-                end
-                bzrtags.gsub!('</p>', ' ' + add + '</p>')
+                bzrtags.gsub!('</p>', ' ' + scm_creator_create_button() + '</p>')
                 bzrtags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
                     path = BazaarCreator.access_root_url(BazaarCreator.default_path(@project.identifier))
@@ -191,15 +184,10 @@ module ScmRepositoriesHelperPatch
             return gittags if scm_creator_max_repositories_reached()
 
             if repository.new_record? && GitCreator.enabled?
-                if defined? observe_field # Rails 3.0 and below
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('repository_operation').value = 'add';")
-                else # Rails 3.1 and above
-                    add = submit_tag(l(:button_create_new_repository), :onclick => "$('#repository_operation').val('add');")
-                end
                 if gittags.include?('<br />')
-                    gittags.gsub!('<br />', ' ' + add + '<br />')
+                    gittags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 else
-                    gittags.gsub!('</p>', ' ' + add + '</p>')
+                    gittags.gsub!('</p>', ' ' + scm_creator_create_button() + '</p>')
                 end
                 gittags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
