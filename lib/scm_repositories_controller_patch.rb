@@ -226,6 +226,14 @@ module ScmRepositoriesControllerPatch
         def scm_create_repository(repository, interface, url)
             name = interface.repository_name(url)
             if name
+                if !interface.belongs_to_project?(name, @project.identifier)
+                    if ScmConfig['auth_is_error']
+                        repository.errors.add(:base,:scm_auth_error, :name => @project.identifier )
+                        return
+                    else
+                        flash[:warning] = l(:text_cannot_be_used_redmine_auth)
+                    end
+                end
                 path = interface.default_path(name)
                 if interface.repository_exists?(name)
                     repository.errors.add(:url, :already_exists)
@@ -247,9 +255,6 @@ module ScmRepositoriesControllerPatch
                 repository.root_url = interface.access_root_url(path)
                 repository.url = interface.access_url(path)
 
-                if !interface.belongs_to_project?(name, @project.identifier)
-                    flash[:warning] = l(:text_cannot_be_used_redmine_auth)
-                end
             else
                 repository.errors.add(:url, :should_be_of_format_local, :repository_format => interface.repository_format)
             end
