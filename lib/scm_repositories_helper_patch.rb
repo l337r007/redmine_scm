@@ -22,6 +22,14 @@ module ScmRepositoriesHelperPatch
                        @project.repositories.select{ |r| r.created_with_scm }.size >= ScmConfig['max_repos'].to_i
             end
 
+            def scm_creator_add_tag_to_set_repository_url_to(tags, path)
+                if defined? observe_field # Rails 3.0 and below
+                    tags << javascript_tag("$('repository_url').value = '#{escape_javascript(path)}';")
+                else # Rails 3.1 and above
+                    tags << javascript_tag("$('#repository_url').val('#{escape_javascript(path)}');")
+                end
+            end
+
         end
     end
 
@@ -82,11 +90,7 @@ module ScmRepositoriesHelperPatch
                     if SubversionCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
                         path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
                     end
-                    if defined? observe_field # Rails 3.0 and below
-                        svntags << javascript_tag("$('repository_url').value = '#{escape_javascript(path)}';")
-                    else # Rails 3.1 and above
-                        svntags << javascript_tag("$('#repository_url').val('#{escape_javascript(path)}');")
-                    end
+                    scm_creator_add_tag_to_set_repository_url_to(svntags, path)
                 end
 
             elsif !repository.new_record? && repository.created_with_scm &&
@@ -122,11 +126,7 @@ module ScmRepositoriesHelperPatch
                     if MercurialCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
                         path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
                     end
-                    if defined? observe_field # Rails 3.0 and below
-                        hgtags << javascript_tag("$('repository_url').value = '#{escape_javascript(path)}';")
-                    else # Rails 3.1 and above
-                        hgtags << javascript_tag("$('#repository_url').val('#{escape_javascript(path)}');")
-                    end
+                    scm_creator_add_tag_to_set_repository_url_to(hgtags, path)
                 end
 
             elsif !repository.new_record? && repository.created_with_scm &&
@@ -164,11 +164,7 @@ module ScmRepositoriesHelperPatch
                     if BazaarCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
                         path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
                     end
-                    if defined? observe_field # Rails 3.0 and below
-                        bzrtags << javascript_tag("$('repository_url').value = '#{escape_javascript(path)}';")
-                    else # Rails 3.1 and above
-                        bzrtags << javascript_tag("$('#repository_url').val('#{escape_javascript(path)}');")
-                    end
+                    scm_creator_add_tag_to_set_repository_url_to(bzrtags, path)
                     if BazaarCreator.options['log_encoding']
                         if defined? observe_field # Rails 3.0 and below
                             bzrtags << javascript_tag("$('repository_log_encoding').value = '#{escape_javascript(BazaarCreator.options['log_encoding'])}';")
@@ -211,11 +207,7 @@ module ScmRepositoriesHelperPatch
                     if GitCreator.repository_exists?(@project.identifier) && @project.respond_to?(:repositories)
                         path << '.' + @project.repositories.select{ |r| r.created_with_scm }.size.to_s
                     end
-                    if defined? observe_field # Rails 3.0 and below
-                        gittags << javascript_tag("$('repository_url').value = '#{escape_javascript(path)}';")
-                    else # Rails 3.1 and above
-                        gittags << javascript_tag("$('#repository_url').val('#{escape_javascript(path)}');")
-                    end
+                    scm_creator_add_tag_to_set_repository_url_to(gittags, path)
                 end
 
             elsif !repository.new_record? && repository.created_with_scm &&
