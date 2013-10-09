@@ -22,3 +22,5 @@ fr:
         scm_local_repositories_denied: L'ajout de dépôts locaux a été interdit par l'administrateur
         scm_only_creator: Utilisez le bouton "Créer le dépôt" pour créer/ajouter un dépôt.
         scm_repository_creation_failed: La création du dépôt a échoué
+        scm_name_not_given: Il manque un nom pour le dépôt
+        scm_auth_error: Le dépôt doit avoir un nom comme "%{name}" ou "%{name}.<chiffre>"
