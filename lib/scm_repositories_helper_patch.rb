@@ -108,8 +108,7 @@ module ScmRepositoriesHelperPatch
                     scm_creator_add_tag_to_set_repository_url_to(svntags, path)
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm &&
-                SubversionCreator.enabled? && SubversionCreator.options['url'].present?
+            elsif SubversionCreator.manages?(repository)
                 name = SubversionCreator.repository_name(repository.root_url)
                 if name
                     svntags.gsub!('(file:///, http://, https://, svn://, svn+[tunnelscheme]://)', SubversionCreator.external_url(name))
@@ -137,8 +136,7 @@ module ScmRepositoriesHelperPatch
                     scm_creator_add_tag_to_set_repository_url_to(hgtags, path)
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm &&
-                MercurialCreator.enabled? && MercurialCreator.options['url'].present?
+            elsif MercurialCreator.manages?(repository)
                 name = MercurialCreator.repository_name(repository.root_url)
                 if name
                     if hgtags.include?(l(:text_mercurial_repository_note))
@@ -175,8 +173,7 @@ module ScmRepositoriesHelperPatch
                     end
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm &&
-                BazaarCreator.enabled? && BazaarCreator.options['url'].present?
+            elsif BazaarCreator.manages?(repository)
                 name = BazaarCreator.repository_name(repository.root_url)
                 if name
                     bzrtags.gsub!('</p>', '<br />' + BazaarCreator.external_url(name) + '</p>')
@@ -204,8 +201,7 @@ module ScmRepositoriesHelperPatch
                     scm_creator_add_tag_to_set_repository_url_to(gittags, path)
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm &&
-                GitCreator.enabled? && GitCreator.options['url'].present?
+            elsif GitCreator.manages?(repository)
                 name = GitCreator.repository_name(repository.root_url)
                 if name
                     if gittags.include?(l(:text_git_repository_note))

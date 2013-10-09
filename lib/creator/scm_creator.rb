@@ -101,6 +101,11 @@ class SCMCreator
             false
         end
 
+        # checks whether a repository is being managed by this creator
+        def manages?(repository)
+            return !repository.new_record? && repository.created_with_scm && options['url'].present?
+        end
+
         # copies hooks (obsolete)
         def copy_hooks(path)
             if options['hooks']
