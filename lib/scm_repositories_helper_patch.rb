@@ -98,8 +98,9 @@ module ScmRepositoriesHelperPatch
             svntags.gsub!('&lt;br /&gt;', '<br />')
 
             return svntags if scm_creator_max_repositories_reached()
+            return svntags unless SubversionCreator.enabled?
 
-            if repository.new_record? && SubversionCreator.enabled?
+            if repository.new_record?
                 svntags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 svntags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
@@ -122,8 +123,9 @@ module ScmRepositoriesHelperPatch
             hgtags = mercurial_field_tags_without_add(form, repository)
 
             return hgtags if scm_creator_max_repositories_reached()
+            return hgtags unless MercurialCreator.enabled?
 
-            if repository.new_record? && MercurialCreator.enabled?
+            if repository.new_record?
                 if hgtags.include?('<br />')
                     hgtags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 else
@@ -156,8 +158,9 @@ module ScmRepositoriesHelperPatch
             bzrtags = bazaar_field_tags_without_add(form, repository)
 
             return bzrtags if scm_creator_max_repositories_reached()
+            return bzrtags unless BazaarCreator.enabled?
 
-            if repository.new_record? && BazaarCreator.enabled?
+            if repository.new_record?
                 bzrtags.gsub!('</p>', ' ' + scm_creator_create_button() + '</p>')
                 bzrtags << hidden_field_tag(:operation, '', :id => 'repository_operation')
                 unless request.post?
@@ -187,8 +190,9 @@ module ScmRepositoriesHelperPatch
             gittags = git_field_tags_without_add(form, repository)
 
             return gittags if scm_creator_max_repositories_reached()
+            return gittags unless GitCreator.enabled?
 
-            if repository.new_record? && GitCreator.enabled?
+            if repository.new_record?
                 if gittags.include?('<br />')
                     gittags.gsub!('<br />', ' ' + scm_creator_create_button() + '<br />')
                 else
