@@ -129,6 +129,11 @@ class SCMCreator
             false
         end
 
+        # checks whether a repository is being managed by this creator
+        def manages?(repository)
+            return !repository.new_record? && repository.created_with_scm && self.enabled? && options['url'].present?
+        end
+
         # removes repository
         def delete_repository(path)
             # See: http://www.ruby-doc.org/stdlib-1.9.3/libdoc/fileutils/rdoc/FileUtils.html#method-c-remove_entry_secure

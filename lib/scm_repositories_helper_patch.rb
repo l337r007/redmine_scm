@@ -71,7 +71,7 @@ module ScmRepositoriesHelperPatch
                     end
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm && SubversionCreator.enabled?
+            elsif SubversionCreator.manages?(repository)
                 url = SubversionCreator.external_url(repository)
                 if url
                     svntags.sub!('(file:///, http://, https://, svn://, svn+[tunnelscheme]://)', url)
@@ -108,7 +108,7 @@ module ScmRepositoriesHelperPatch
                     end
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm && MercurialCreator.enabled?
+            elsif MercurialCreator.manages?(repository)
                 url = MercurialCreator.external_url(repository)
                 if url
                     if hgtags.include?(l(:text_mercurial_repository_note))
@@ -154,7 +154,7 @@ module ScmRepositoriesHelperPatch
                     end
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm && BazaarCreator.enabled?
+            elsif BazaarCreator.manages?(repository)
                 url = BazaarCreator.external_url(repository)
                 if url
                     bzrtags.sub!('</p>', '<br />' + url + '</p>')
@@ -194,7 +194,7 @@ module ScmRepositoriesHelperPatch
                     end
                 end
 
-            elsif !repository.new_record? && repository.created_with_scm && GitCreator.enabled?
+            elsif GitCreator.manages?(repository)
                 url = GitCreator.external_url(repository)
                 if url
                     if gittags.include?(l(:text_git_repository_note))
