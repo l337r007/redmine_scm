@@ -32,7 +32,7 @@
         <%= link_to(l(:label_user_plural), committers_repository_path(repository),
              :class => 'icon icon-user') %>
         <%= link_to(l(:button_edit), edit_repository_path(repository),
-             :class => 'icon icon-edit') %>
+             :class => 'icon icon-edit') unless ScmConfig['only_use_name'] %>
         <%= link_to(l(:button_delete), repository_path(repository),
             :confirm => l(:text_are_you_sure),
             :method  => :delete,
