@@ -86,7 +86,7 @@ module ScmRepositoriesHelperPatch
         end
 
         def subversion_field_tags_with_add(form, repository)
-            if ScmConfig['only_use_name']
+            if ScmConfig['only_use_name'] && SubversionCreator.enabled?
                return self.scm_field_tags_name_only(form, repository, SubversionCreator)
             end
             svntags = subversion_field_tags_without_add(form, repository)
@@ -123,7 +123,7 @@ module ScmRepositoriesHelperPatch
         end
 
         def mercurial_field_tags_with_add(form, repository)
-            if ScmConfig['only_use_name']
+            if ScmConfig['only_use_name'] && MercurialCreator.enabled?
                return self.scm_field_tags_name_only(form, repository, MercurialCreator)
             end
             hgtags = mercurial_field_tags_without_add(form, repository)
@@ -169,7 +169,7 @@ module ScmRepositoriesHelperPatch
         end
 
         def bazaar_field_tags_with_add(form, repository)
-            if ScmConfig['only_use_name']
+            if ScmConfig['only_use_name'] && BazaarCreator.enabled?
                return self.scm_field_tags_name_only(form, repository, BazaarCreator)
             end
             bzrtags = bazaar_field_tags_without_add(form, repository)
@@ -212,7 +212,7 @@ module ScmRepositoriesHelperPatch
         end
 
         def git_field_tags_with_add(form, repository)
-            if ScmConfig['only_use_name']
+            if ScmConfig['only_use_name'] && GitCreator.enabled?
                return self.scm_field_tags_name_only(form, repository, GitCreator)
             end
             gittags = git_field_tags_without_add(form, repository)
